@@ -16,10 +16,10 @@ namespace shed_zip{
             LZ77Matcher(const ZipConfig& cfg);
 
             // 寻找最长匹配
-            Match find_longest_match(const shed_std::Vvector<unit8_t>& data, int current_pos);
+            Match find_longest_match(const shed_std::Vvector<uint8_t>& data, int current_pos);
 
             // 插入Hash(用于Lazy Update)
-            void insert_hash(const shed_std::Vvector<unit8_t>& data,int pos);
+            void insert_hash(const shed_std::Vvector<uint8_t>& data,int pos);
         private:
             ZipConfig config;
             shed_std::Hhashmap<uint32_t,int> head; // Key： 3-byte Hash, Value:pos

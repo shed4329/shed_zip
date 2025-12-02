@@ -6,7 +6,7 @@
 
 namespace shed_zip{
     // 基础类别定义
-    using unit8_t   = unsigned char;
+    using uint8_t   = unsigned char;
     using uint16_t  = unsigned short;
     using uint32_t  = unsigned int;
     using int32_t   = int;

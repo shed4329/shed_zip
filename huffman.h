@@ -8,7 +8,7 @@ namespace shed_zip{
         public:
             HuffmanEncoder();
             // 将 Literal(0-255) 写入字节流
-            void write_literal(unit8_t literal);
+            void write_literal(uint8_t literal);
 
             // 将 长度与距离对 写入字节流
             void write_match(int length, int distance);
@@ -19,12 +19,12 @@ namespace shed_zip{
             // 写入区块标题
             void write_block_header(bool in_final);
             // 取得编码后的字节组流
-            shed_std::Vvector<unit8_t>& get_buffer();
+            shed_std::Vvector<uint8_t>& get_buffer();
             // 清空缓冲区
             void reset();
 
         private:
-            shed_std::Vvector<unit8_t> buffer;
+            shed_std::Vvector<uint8_t> buffer;
             uint32_t bit_buffer;
             int bit_count;
 

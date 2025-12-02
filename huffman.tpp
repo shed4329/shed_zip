@@ -36,7 +36,7 @@ namespace shed_zip{
         bit_count = 0;
     }
 
-    shed_std::Vvector<unit8_t>& HuffmanEncoder::get_buffer(){
+    shed_std::Vvector<uint8_t>& HuffmanEncoder::get_buffer(){
         flush_byte_align();
         return buffer;
     }
@@ -48,7 +48,7 @@ namespace shed_zip{
         bit_count += bits;
         // 8位8位地刷出
         while(bit_count >= 8){
-            buffer.push_back(static_cast<unit8_t>(bit_buffer & 0xFF));
+            buffer.push_back(static_cast<uint8_t>(bit_buffer & 0xFF));
             bit_buffer >>= 8;
             bit_count -= 8;
         }
@@ -68,7 +68,7 @@ namespace shed_zip{
     void HuffmanEncoder::flush_byte_align(){
         if(bit_count > 0){
             // 不足补0
-            buffer.push_back(static_cast<unit8_t>(bit_buffer & 0xFF));
+            buffer.push_back(static_cast<uint8_t>(bit_buffer & 0xFF));
             bit_buffer = 0;
             bit_count = 0;
         }
@@ -83,7 +83,7 @@ namespace shed_zip{
         write_bits(header,3);
     }
 
-    void HuffmanEncoder::write_literal(unit8_t literal){
+    void HuffmanEncoder::write_literal(uint8_t literal){
         uint32_t code;
         int bits;
         int val = literal;
