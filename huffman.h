@@ -22,6 +22,8 @@ namespace shed_zip{
             shed_std::Vvector<uint8_t>& get_buffer();
             // 清空缓冲区
             void reset();
+            // 刷新缓冲区
+            void flush_byte_align();
 
         private:
             shed_std::Vvector<uint8_t> buffer;
@@ -31,7 +33,7 @@ namespace shed_zip{
             // 内部字节写入函数
             void write_bits(uint32_t value, int bits);
             void write_huffman_code(uint32_t code, int bits);
-            void flush_byte_align();
+            
 
             // 查找表
             static const int length_extra_bits[];

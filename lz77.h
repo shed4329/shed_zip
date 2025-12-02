@@ -27,6 +27,8 @@ namespace shed_zip{
             static constexpr int MIN_MATCH = 3;
             static constexpr int MAX_MATCH = 258;
     };
+
+    #include "lz77.tpp"
 } // namespace shed_zip
 
 #endif // LZ77_H
