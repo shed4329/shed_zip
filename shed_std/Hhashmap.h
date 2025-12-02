@@ -305,6 +305,15 @@ public:
      * @return 桶数量
      */
     int bucket_size();
+
+
+    /**
+     * @brief 查找key对应的迭代器，找不到返回end
+     * @param 键的值
+     * @return 迭代器
+     */
+    Hhashmap_iterator find(const K& key);
+
 };
 
 // -------------------------------------------------------------------
@@ -318,7 +327,7 @@ public:
  * @tparam Hash 哈希函数类型
  */
 template <typename K, typename V, typename Hash>
-class Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>> {
+class Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>> {
 private:
     Aarray<Rred_black_tree<pair<K, V>>> _data;  // 桶数组（每个桶是红黑树）
     Hash _hash;                                 // 哈希函数对象
@@ -643,6 +652,20 @@ public:
      * @return 指向末尾的常量迭代器
      */
     Hhashmap_const_iterator cend() const;
+
+     /**
+     * @brief 查找key对应的迭代器，找不到返回end
+     * @param 键的值
+     * @return 迭代器
+     */
+    Hhashmap_iterator find(const K& key);
+
+    /**
+     * @brief 查找key对应的迭代器，找不到返回end
+     * @param 键的值
+     * @return 常量迭代器，未找到返回end
+     */
+    Hhashmap_const_iterator find(const K& key) const;
 };
 
 }  // namespace shed_std

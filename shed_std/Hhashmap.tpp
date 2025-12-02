@@ -229,7 +229,7 @@ typename Hhashmap<K, V, Hash, Enable>::Hhashmap_iterator Hhashmap<K, V, Hash, En
 
 template <typename K, typename V, typename Hash, typename Enable>
 typename Hhashmap<K, V, Hash, Enable>::Hhashmap_iterator Hhashmap<K, V, Hash, Enable>::end() {
-    return Hhashmap_iterator(this, _data.size(), Llist<pair<K, V>>::Llist_iterator(nullptr));
+    return Hhashmap_iterator(this, _data.size(), typename Llist<pair<K, V>>::Llist_iterator(nullptr)); // 模板嵌套需要typename
 }
 
 template <typename K, typename V, typename Hash, typename Enable>
@@ -265,13 +265,26 @@ int Hhashmap<K, V, Hash, Enable>::bucket_size() {
     return _data.size();
 }
 
+template <typename K, typename V, typename Hash, typename Enable>
+typename Hhashmap<K,V,Hash,Enable>::Hhashmap_iterator Hhashmap<K, V, Hash, Enable>::find(const K& key) {
+    int index = get_index(key); // 获取桶索引
+    Llist<pair<K, V>>* list = get_list(index); // 获取对应的链表
+
+    for (typename Llist<pair<K, V>>::Llist_iterator it = list->begin(); it != list->end(); ++it) {
+        if (it->first == key) {
+            return Hhashmap_iterator(this, index, it);
+        }
+    }
+    return end();
+}
+
 // -------------------------------------------------------------------
 // 偏特化类（红黑树版本）实现
 // -------------------------------------------------------------------
 
 // 私有成员函数
 template <typename K, typename V, typename Hash>
-void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::_auto_expand() {
+void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::_auto_expand() {
     int current_capacity = _data.size();
 
     // 初始化容量（防止空桶数组）
@@ -290,7 +303,7 @@ void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::_auto_e
 }
 
 template <typename K, typename V, typename Hash>
-void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::rehash(int new_capacity) {
+void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::rehash(int new_capacity) {
     if (new_capacity <= _data.size()) {
         return;  // 新容量必须大于当前容量
     }
@@ -314,27 +327,27 @@ void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::rehash(
 
 // 普通迭代器实现
 template <typename K, typename V, typename Hash>
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator::Hhashmap_iterator(
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator::Hhashmap_iterator(
     Hhashmap<K, V, Hash>* map, int index, TreeIterator it)
     : _map(map), _bucket_index(index), _tree_iterator(it) {}
 
 template <typename K, typename V, typename Hash>
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator::Hhashmap_iterator()
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator::Hhashmap_iterator()
     : _map(nullptr), _bucket_index(0), _tree_iterator(nullptr, nullptr) {}
 
 template <typename K, typename V, typename Hash>
-pair<K, V>& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator::operator*() const {
+pair<K, V>& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator::operator*() const {
     return *_tree_iterator;
 }
 
 template <typename K, typename V, typename Hash>
-pair<K, V>* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator::operator->() const {
+pair<K, V>* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator::operator->() const {
     return &(*_tree_iterator);
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator&
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator::operator++() {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator&
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator::operator++() {
     ++_tree_iterator;  // 先移动红黑树迭代器
 
     // 若当前树已遍历完，查找下一个非空桶
@@ -345,25 +358,25 @@ Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_ite
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator::operator++(int) {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator::operator++(int) {
     Hhashmap_iterator temp = *this;
     ++(*this);
     return temp;
 }
 
 template <typename K, typename V, typename Hash>
-bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator::operator==(const Hhashmap_iterator& other) const {
+bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator::operator==(const Hhashmap_iterator& other) const {
     return _bucket_index == other._bucket_index && _tree_iterator == other._tree_iterator;
 }
 
 template <typename K, typename V, typename Hash>
-bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator::operator!=(const Hhashmap_iterator& other) const {
+bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator::operator!=(const Hhashmap_iterator& other) const {
     return !(*this == other);
 }
 
 template <typename K, typename V, typename Hash>
-void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator::find_next_valid_bucket() {
+void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator::find_next_valid_bucket() {
     for (++_bucket_index; _bucket_index < _map->_data.size(); ++_bucket_index) {
         if (!_map->_data[_bucket_index].empty()) {
             _tree_iterator = _map->_data[_bucket_index].begin();
@@ -377,31 +390,31 @@ void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashma
 
 // 常量迭代器实现
 template <typename K, typename V, typename Hash>
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::Hhashmap_const_iterator(
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::Hhashmap_const_iterator(
     const Hhashmap<K, V, Hash>* map, int index, TreeConstIterator it)
     : _map(map), _bucket_index(index), _tree_iterator(it) {}
 
 template <typename K, typename V, typename Hash>
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::Hhashmap_const_iterator()
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::Hhashmap_const_iterator()
     : _map(nullptr), _bucket_index(0), _tree_iterator(nullptr, nullptr) {}
 
 template <typename K, typename V, typename Hash>
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::Hhashmap_const_iterator(const Hhashmap_iterator& other)
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::Hhashmap_const_iterator(const Hhashmap_iterator& other)
     : _map(other._map), _bucket_index(other._bucket_index), _tree_iterator(other._tree_iterator) {}
 
 template <typename K, typename V, typename Hash>
-const pair<K, V>& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::operator*() const {
+const pair<K, V>& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::operator*() const {
     return *_tree_iterator;
 }
 
 template <typename K, typename V, typename Hash>
-const pair<K, V>* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::operator->() const {
+const pair<K, V>* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::operator->() const {
     return &(*_tree_iterator);
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator&
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::operator++() {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator&
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::operator++() {
     ++_tree_iterator;  // 先移动红黑树常量迭代器
 
     // 若当前树已遍历完，查找下一个非空桶
@@ -412,25 +425,25 @@ Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_con
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::operator++(int) {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::operator++(int) {
     Hhashmap_const_iterator temp = *this;
     ++(*this);
     return temp;
 }
 
 template <typename K, typename V, typename Hash>
-bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::operator==(const Hhashmap_const_iterator& other) const {
+bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::operator==(const Hhashmap_const_iterator& other) const {
     return _bucket_index == other._bucket_index && _tree_iterator == other._tree_iterator;
 }
 
 template <typename K, typename V, typename Hash>
-bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::operator!=(const Hhashmap_const_iterator& other) const {
+bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::operator!=(const Hhashmap_const_iterator& other) const {
     return !(*this == other);
 }
 
 template <typename K, typename V, typename Hash>
-void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator::find_next_valid_bucket() {
+void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator::find_next_valid_bucket() {
     for (++_bucket_index; _bucket_index < _map->_data.size(); ++_bucket_index) {
         if (!_map->_data[_bucket_index].empty()) {
             _tree_iterator = _map->_data[_bucket_index].begin();
@@ -444,16 +457,16 @@ void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashma
 
 // 公共成员函数
 template <typename K, typename V, typename Hash>
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap()
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap()
     : _data(DEFAULT_INITIAL_CAPACITY), _hash(), _size(0) {}
 
 template <typename K, typename V, typename Hash>
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap(const Hhashmap& other)
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap(const Hhashmap& other)
     : _data(other._data), _hash(other._hash), _size(other._size) {}
 
 template <typename K, typename V, typename Hash>
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>&
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::operator=(const Hhashmap& other) {
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>&
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::operator=(const Hhashmap& other) {
     if (this != &other) {
         _data = other._data;
         _hash = other._hash;
@@ -463,33 +476,33 @@ Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::operator=(co
 }
 
 template <typename K, typename V, typename Hash>
-bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::operator==(const Hhashmap& other) const {
+bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::operator==(const Hhashmap& other) const {
     return _data == other._data && _hash == other._hash && _size == other._size;
 }
 
 template <typename K, typename V, typename Hash>
-bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::operator!=(const Hhashmap& other) const {
+bool Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::operator!=(const Hhashmap& other) const {
     return !(*this == other);
 }
 
 template <typename K, typename V, typename Hash>
-int Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::get_index(const K& key) const {
+int Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::get_index(const K& key) const {
     int hash = static_cast<int>(_hash(key));
     return hash & (_data.size() - 1);  // 利用2的幂特性取模
 }
 
 template <typename K, typename V, typename Hash>
-Rred_black_tree<pair<K, V>>* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::get_tree(int index) {
+Rred_black_tree<pair<K, V>>* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::get_tree(int index) {
     return &_data[index];
 }
 
 template <typename K, typename V, typename Hash>
-const Rred_black_tree<pair<K, V>>* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::get_tree(int index) const {
+const Rred_black_tree<pair<K, V>>* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::get_tree(int index) const {
     return &_data[index];
 }
 
 template <typename K, typename V, typename Hash>
-void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::insert(const K& key, const V& value) {
+void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::insert(const K& key, const V& value) {
     _auto_expand();  // 插入前检查扩容
 
     int index = get_index(key);
@@ -509,7 +522,7 @@ void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::insert(
 }
 
 template <typename K, typename V, typename Hash>
-V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::get(const K& key) {
+V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::get(const K& key) {
     Rred_black_tree<pair<K, V>>* tree = get_tree(get_index(key));
     for (typename Rred_black_tree<pair<K, V>>::Rred_black_tree_iterator it = tree->begin(); it != tree->end(); ++it) {
         if (it->first == key) {
@@ -520,7 +533,7 @@ V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::get(const
 }
 
 template <typename K, typename V, typename Hash>
-const V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::get(const K& key) const {
+const V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::get(const K& key) const {
     const Rred_black_tree<pair<K, V>>* tree = get_tree(get_index(key));
     for (typename Rred_black_tree<pair<K, V>>::Rred_black_tree_const_iterator it = tree->begin(); it != tree->end(); ++it) {
         if (it->first == key) {
@@ -531,7 +544,7 @@ const V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::get
 }
 
 template <typename K, typename V, typename Hash>
-V& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::operator[](const K& key) {
+V& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::operator[](const K& key) {
     if (V* val_ptr = get(key)) {
         return *val_ptr;
     }
@@ -539,17 +552,17 @@ V& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::operator[
 }
 
 template <typename K, typename V, typename Hash>
-int Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::size() const {
+int Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::size() const {
     return _size;
 }
 
 template <typename K, typename V, typename Hash>
-int Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::empty() const {
+int Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::empty() const {
     return _size == 0;
 }
 
 template <typename K, typename V, typename Hash>
-void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::clear() {
+void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::clear() {
     for (int i = 0; i < _data.size(); ++i) {
         _data[i].clear();
     }
@@ -557,7 +570,7 @@ void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::clear()
 }
 
 template <typename K, typename V, typename Hash>
-void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::erase(const K& key) {
+void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::erase(const K& key) {
     int index = get_index(key);
     Rred_black_tree<pair<K, V>>* tree = get_tree(index);
 
@@ -572,18 +585,18 @@ void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::erase(c
 }
 
 template <typename K, typename V, typename Hash>
-V& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::at(const K& key) {
+V& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::at(const K& key) {
     return operator[](key);
 }
 
 template <typename K, typename V, typename Hash>
-int Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::bucket_size() {
+int Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::bucket_size() {
     return _data.size();
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::begin() {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::begin() {
     // 查找第一个非空桶
     for (int i = 0; i < _data.size(); ++i) {
         if (!_data[i].empty()) {
@@ -594,16 +607,16 @@ Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::begin() {
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_iterator
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::end() {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::end() {
     using Tree = shed_std::Rred_black_tree<shed_std::pair<K, V>>;
     using TreeIterator = typename Tree::Rred_black_tree_iterator;
     return Hhashmap_iterator(this, _data.size(), TreeIterator(nullptr, nullptr));
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::begin() const {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::begin() const {
     // 查找第一个非空桶
     for (int i = 0; i < _data.size(); ++i) {
         if (!_data[i].empty()) {
@@ -614,22 +627,48 @@ Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::begin() cons
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::end() const {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::end() const {
     using Tree = shed_std::Rred_black_tree<shed_std::pair<K, V>>;
     using TreeConstIterator = typename Tree::Rred_black_tree_const_iterator;
     return Hhashmap_const_iterator(this, _data.size(), TreeConstIterator(nullptr, nullptr));
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::cbegin() const {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::cbegin() const {
     return begin();
 }
 
 template <typename K, typename V, typename Hash>
-typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::Hhashmap_const_iterator
-Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<V>::value>>::cend() const {
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::cend() const {
+    return end();
+}
+
+template <typename K, typename V, typename Hash>
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::find(const K& key) {
+    int index = get_index(key); // 获取红黑树
+    Rred_black_tree<pair<K,V>>* tree = get_tree(index); // 获取对应的红黑树
+    for (typename Rred_black_tree<pair<K, V>>::Rred_black_tree_iterator it = tree->begin(); it != tree->end(); ++it) {
+        if (it->first == key) {
+            return Hhashmap_iterator(this, index, it);
+        }
+    }
+    return end();
+}
+
+template <typename K, typename V, typename Hash>
+typename Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::Hhashmap_const_iterator
+Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::find(const K& key) const{
+    int index = get_index(key); // 获取红黑树
+    const Rred_black_tree<pair<K,V>>* tree = get_tree(index); // 获取对应的红黑树
+    for (typename Rred_black_tree<pair<K, V>>::Rred_black_tree_const_iterator it = tree->begin(); it != tree->end(); ++it) {
+        if (it->first == key) {
+            return Hhashmap_const_iterator(this, index, it);
+        }
+    }
     return end();
 }
 
