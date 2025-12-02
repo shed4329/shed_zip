@@ -14,6 +14,7 @@ namespace shed_zip{
         private:
             ZipConfig config;
     };
+    #include "deflate_compressor.tpp"
 }
 
 #endif // DEFLATE_COMPRESSOR_H
