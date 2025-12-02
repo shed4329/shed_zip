@@ -25,6 +25,8 @@ namespace shed_zip{
             // 刷新缓冲区
             void flush_byte_align();
 
+
+
         private:
             shed_std::Vvector<uint8_t> buffer;
             uint32_t bit_buffer;
@@ -42,7 +44,9 @@ namespace shed_zip{
             static const int dist_base[];
     };
 
-    #include "huffman.tpp"
+    
 }
+
+#include "huffman.tpp"
 
 #endif // HUFFMAN_H

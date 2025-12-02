@@ -47,4 +47,6 @@ namespace shed_zip{
     }
 }
 
+#include "deflate_compressor.tpp"
+
 #endif // DEFLATE_COMPRESSOR_TPP
