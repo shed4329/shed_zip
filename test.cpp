@@ -4,8 +4,7 @@
 #include "shed_std/Oostream.h"
 #include "shed_std/Cconsole_output.h"
 
-// 輔助函數：將數字轉換為 Hex 字符串並輸出
-// 因為不能用 printf("%02X")
+// 辅助函数，将数字转换为Hex输出
 void print_hex_byte(shed_std::Oostream& out, unsigned char byte) {
     const char* hex_chars = "0123456789ABCDEF";
     out << hex_chars[(byte >> 4) & 0xF];
@@ -16,7 +15,7 @@ void print_hex_byte(shed_std::Oostream& out, unsigned char byte) {
 int func(){
      shed_zip::DeflateCompressor compressor;
 
-    // 測試資料
+    // 测试文本
     shed_std::Sstring text = "HELLO HELLO HELLO HELLO WORLD! THIS IS A TEST OF THE SHED_STD DEFLATE COMPRESSOR.";
     
     shed_std::Vvector<unsigned char> input_data;
@@ -29,7 +28,7 @@ int func(){
     shed_std::Cconsole_output<<input_data.size()<< shed_std::end_line;
     shed_std::Cconsole_output << " bytes"<< shed_std::end_line;
 
-    // 執行壓縮
+    // 执行压缩
     shed_std::Vvector<unsigned char> compressed = compressor.compress(input_data);
 
     shed_std::Cconsole_output << "Compressed Size: "<< shed_std::end_line;
@@ -46,6 +45,11 @@ int func(){
 }
 
 
+/**
+ * 具体的测试结果，可以用这个网站解密
+ * https://www.toolhelper.cn/EncodeDecode/Compress
+ * 选择Deflate算法
+ */
 int main() {
     try{
         func();
