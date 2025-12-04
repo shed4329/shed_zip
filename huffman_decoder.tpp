@@ -33,7 +33,7 @@ namespace shed_zip{
         uint32_t bits8 = reader.peek_bits(8);
         uint32_t huff8 = reverse_bits(bits8,8);
 
-        if(huff8 >= 0x30 && huff8 <= 0x8F){
+        if(huff8 >= 0x30 && huff8 <= 0xBF){
             reader.drop_bits(8);
             return huff8 - 0x30; // 0 - 143
         }else if(huff8 >= 0xC0 && huff8 <= 0xC7){
