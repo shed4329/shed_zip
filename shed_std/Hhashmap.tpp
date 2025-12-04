@@ -187,23 +187,16 @@ V* Hhashmap<K, V, Hash, Enable>::get(const K& key) {
     return nullptr;
 }
 
-template <typename K, typename V, typename Hash, typename Enable>
-const V* Hhashmap<K, V, Hash, Enable>::get(const K& key) const {
-    const Llist<pair<K, V>>* list = get_list(get_index(key));
-    for (typename Llist<pair<K, V>>::Llist_iterator it = list->begin(); it != list->end(); ++it) {
-        if (it->first == key) {
-            return &(it->second);
-        }
-    }
-    return nullptr;
-}
 
 template <typename K, typename V, typename Hash, typename Enable>
 V& Hhashmap<K, V, Hash, Enable>::operator[](const K& key) {
-    if (V* val_ptr = get(key)) {
+    V* val_ptr = get(key);
+    if (val_ptr!=nullptr) {
         return *val_ptr;
+    }else{
+        insert(key,V());
+        return *get(key);
     }
-    throw Eexception("Hhashmap::operator[]: Key not found.");
 }
 
 template <typename K, typename V, typename Hash, typename Enable>
@@ -257,8 +250,13 @@ void Hhashmap<K, V, Hash, Enable>::erase(const K& key) {
 
 template <typename K, typename V, typename Hash, typename Enable>
 V& Hhashmap<K, V, Hash, Enable>::at(const K& key) {
-    return operator[](key);
+    V* val_ptr = get(key);
+    if (val_ptr != nullptr) {
+        return *val_ptr;
+    }
+    throw Eexception("Eexception: key not found!");
 }
+
 
 template <typename K, typename V, typename Hash, typename Enable>
 int Hhashmap<K, V, Hash, Enable>::bucket_size() {
@@ -533,7 +531,7 @@ V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::get(const
 }
 
 template <typename K, typename V, typename Hash>
-const V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::get(const K& key) const {
+const V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::get(const K& key) const{
     const Rred_black_tree<pair<K, V>>* tree = get_tree(get_index(key));
     for (typename Rred_black_tree<pair<K, V>>::Rred_black_tree_const_iterator it = tree->begin(); it != tree->end(); ++it) {
         if (it->first == key) {
@@ -545,10 +543,14 @@ const V* Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::get
 
 template <typename K, typename V, typename Hash>
 V& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::operator[](const K& key) {
-    if (V* val_ptr = get(key)) {
+    V* val_ptr = get(key);
+    if (val_ptr != nullptr) {
         return *val_ptr;
+    }else{
+        insert(key, V()); 
+        return *get(key);
     }
-    throw Eexception("Hhashmap::operator[]: Key not found.");
+    
 }
 
 template <typename K, typename V, typename Hash>
@@ -586,7 +588,20 @@ void Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::erase(c
 
 template <typename K, typename V, typename Hash>
 V& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::at(const K& key) {
-    return operator[](key);
+    V* val_ptr = get(key);
+    if (val_ptr != nullptr) {
+        return *val_ptr;
+    }
+    throw Eexception("Eexception: key not found!");
+}
+
+template <typename K, typename V, typename Hash>
+const V& Hhashmap<K, V, Hash, enable_if_type<is_totally_ordered<K>::value>>::at(const K& key) const{
+    const V* val_ptr = get(key);
+    if (val_ptr != nullptr) {
+        return *val_ptr;
+    }
+    throw Eexception("Eexception: key not found!");
 }
 
 template <typename K, typename V, typename Hash>
