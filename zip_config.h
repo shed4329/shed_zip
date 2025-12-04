@@ -60,6 +60,17 @@ namespace shed_zip{
        ZipConfig(int _level):ZipConfig(_level,DEFAULT_WINDWOS_SZIE){};
        ZipConfig():ZipConfig(DEFAULT_LEVEL,DEFAULT_LEVEL){};
     };
+
+    // 错误码定义
+    enum class DecompressStatus{
+        OK = 0,
+        ERROR_BAD_HEADER,
+        ERROR_BAD_BLOCK_TYPE,
+        ERROR_BAD_CRC,
+        ERROR_UNSUPPORTED,
+        ERROR_TRUNCATED_DATA,
+        ERROR_UNKNOWN_FORMAT
+    };
 }
 
 #endif  // ZIP_CONFIG_H

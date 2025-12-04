@@ -21,5 +21,6 @@ namespace shed_zip{
             void write_u16(shed_std::Vvector<uint8_t>& buf,uint16_t val);
     };
 }
+#include "zip_archiver.tpp"
 
 #endif

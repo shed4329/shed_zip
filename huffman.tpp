@@ -5,7 +5,6 @@
 
 namespace shed_zip{
     // see RFC 1951 standard
-    // TODO: understand this
     // 用于存储LZ77匹配长度的编码，长度值不是直接存储，而应该符号+额外bit
     // 这样设计用于节约空间
     const int HuffmanEncoder::length_extra_bits[] = {

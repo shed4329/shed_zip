@@ -16,7 +16,7 @@ int func(){
      shed_zip::DeflateCompressor compressor;
 
     // 测试文本
-    shed_std::Sstring text = "HELLO HELLO HELLO HELLO WORLD! THIS IS A TEST OF THE SHED_STD DEFLATE COMPRESSOR.";
+    shed_std::Sstring text = "HELLO HELLO HELLO HELLO WORLD! THIS IS A TEST OF THE SHED_ZIP DEFLATE COMPRESSOR.";
     
     shed_std::Vvector<unsigned char> input_data;
     for (int i = 0; i < text.size(); ++i) {
