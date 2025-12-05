@@ -1,7 +1,7 @@
 #ifndef HUFFMAN_DECODER_H
 #define HUFFMAN_DECODER_H
 
-#include "zip_config.h"
+#include "../zip_config.h"
 #include "bit_reader.h"
 
 namespace shed_zip{

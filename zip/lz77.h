@@ -1,8 +1,8 @@
 #ifndef LZ77_H
 #define LZ77_H
 
-#include "zip_config.h"
-#include "shed_std/Hhashmap.h"
+#include "../zip_config.h"
+#include "../shed_std/Hhashmap.h"
 
 namespace shed_zip{
     struct Match{

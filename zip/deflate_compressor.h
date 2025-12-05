@@ -1,7 +1,7 @@
 #ifndef DEFLATE_COMPRESSOR_H
 #define DEFLATE_COMPRESSOR_H
 
-#include "zip_config.h"
+#include "../zip_config.h"
 #include "huffman.h"
 #include "lz77.h"
 

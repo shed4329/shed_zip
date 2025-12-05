@@ -1,7 +1,7 @@
 #ifndef UNZIP_EXTRACTOR_H
 #define UNZIP_EXTRACTOR_H
 
-#include "zip_config.h"
+#include "../zip_config.h"
 #include "inflate_decompressor.h"
 
 namespace shed_zip{

@@ -1,4 +1,4 @@
-#include "deflate_compressor.h"
+#include "zip/deflate_compressor.h"
 #include "shed_std/Vvector.h"
 #include "shed_std/Sstring.h"
 #include "shed_std/Oostream.h"

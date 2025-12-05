@@ -1,7 +1,7 @@
 #ifndef INFLATE_DECOMPRESSOR_H
 #define INFLATE_DECOMPRESSOR_H
 
-#include "zip_config.h"
+#include "../zip_config.h"
 #include "bit_reader.h"
 
 namespace shed_zip{

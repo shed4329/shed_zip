@@ -1,6 +1,6 @@
 #include "zip_config.h"
-#include "zip_archiver.h"
-#include "unzip_extractor.h"
+#include "zip/zip_archiver.h"
+#include "unzip/unzip_extractor.h"
 #include "shed_std/Oostream.h"
 #include "shed_std/Cconsole_output.h"
 

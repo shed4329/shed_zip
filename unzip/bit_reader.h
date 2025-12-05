@@ -1,9 +1,9 @@
 #ifndef BIT_READER
 #define BIT_READER
 
-#include "zip_config.h"
+#include "../zip_config.h"
 
-#include "shed_std/Vvector.h"
+#include "../shed_std/Vvector.h"
 
 namespace shed_zip{
     class BitReader{

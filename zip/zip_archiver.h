@@ -1,7 +1,7 @@
 #ifndef ZIP_ARCHIVER_H
 #define ZIP_ARCHIVER_H
 
-#include "zip_config.h"
+#include "../zip_config.h"
 #include "deflate_compressor.h"
 
 namespace shed_zip{

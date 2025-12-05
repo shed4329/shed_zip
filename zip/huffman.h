@@ -1,7 +1,7 @@
 #ifndef HUFFMAN_H
 #define HUFFMAN_H
 
-#include "zip_config.h"
+#include "../zip_config.h"
 
 namespace shed_zip{
     class HuffmanEncoder{
