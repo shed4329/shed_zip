@@ -5,3 +5,7 @@
 # 忽略生成的zip
 *.zip
 *.gz
+# 忽略图片
+*.svg
+*.jpg
+*.png

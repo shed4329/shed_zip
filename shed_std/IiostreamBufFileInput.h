@@ -172,7 +172,7 @@ namespace shed_std{
                         return -1;
                     }
                 }
-                return (char)_buf[_pos++];
+                return (unsigned char)_buf[_pos++];
             }
 
             // 输入接口:获取当前字符，不移动指针
@@ -183,7 +183,7 @@ namespace shed_std{
                         return -1;
                     }
                 }
-                return (char)_buf[_pos];
+                return (unsigned char)_buf[_pos];
             }
 
             // 禁用输出相关接口
