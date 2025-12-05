@@ -52,10 +52,10 @@ namespace shed_std{
             }
             
             // 读取n个字符到s,是否启用长度上限1024，启用时超出截断，移除上限对大文件二进制读取有帮助
-            void read_n(char* s, int n,bool enable_max = true){
+            int read_n(char* s, int n,bool enable_max = true){
                 if(!is_good() || s == nullptr || n < 0){
                     // 无效
-                    return;
+                    return -1;
                 }
 
                 if(enable_max){
@@ -64,16 +64,20 @@ namespace shed_std{
                     }
                 }
 
+                int read_len = 0;
+
                 for(int i = 0 ; i< n; ++i){
                     int c = _buf->stream_bump_char();
                     if(c == -1){
                         _buf->setState(Iiostream_state::IO_EOF);
                         break;
                     }
-
+                    ++read_len;
                     s[i] = static_cast<char>(c);
                 }
+                return read_len;
             }
+
 
             // 读取一行（不含换行符）
             Iistream& get_line(char* buf,int max_len = MAX_READING_LENGTH){
