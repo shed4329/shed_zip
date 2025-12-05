@@ -33,7 +33,13 @@ namespace shed_std{
             // 获取缓冲区状态
             Iiostream_state state() const{return _state;}
              // 状态设置函数：供派生类使用
-            void setState(Iiostream_state state){_state = state;}
+            void setState(Iiostream_state state){
+                if(state == Iiostream_state::IO_GOOD){
+                    _state = Iiostream_state::IO_GOOD;
+                }else{
+                    _state = static_cast<Iiostream_state>(_state | state);
+                }
+            }
     };
 }
 

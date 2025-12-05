@@ -54,9 +54,9 @@ namespace shed_std{
                 return *this;
             }
 
-            // 输出指定长度的字符串序列，最大长度65535
-            Oostream& put_chars(const char* str,int n){
-                if(n>MAX_LEN){
+            // 输出指定长度的字符串序列，最大长度65535,默认检查最大长度截断
+            Oostream& put_chars(const char* str,int n,bool check_max_length = true){
+                if(check_max_length && n>MAX_LEN){
                     n=MAX_LEN;
                 }
                 if(is_good()&&str!=nullptr&&n>0){
@@ -64,6 +64,9 @@ namespace shed_std{
                 }
                 return *this;
             }
+        
+
+
             
             // 运算符重载
             Oostream&  operator<<(char c){
