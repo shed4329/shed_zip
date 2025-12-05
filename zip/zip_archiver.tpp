@@ -39,13 +39,27 @@ namespace shed_zip{
         shed_std::Vvector<uint8_t> out;
 
         // GZIP Header
-        out.push_back(0x1F);
-        out.push_back(0x8B);
-        out.push_back(0x08); // Deflate
-        out.push_back(0x00); // Flags
+        out.push_back(0x1F); // ID1
+        out.push_back(0x8B); // ID2
+        out.push_back(0x08); // CM(Deflate)
+
+        // 0x00 = no file name, 0x08 = filename
+        uint8_t flags = 0;
+        if(filename.size() >0 && filename[0] != ' '){
+            flags |= 0x08;
+        }
+        out.push_back(flags); // Flags
         write_u32(out,0);    // Time
         out.push_back(0x00); //  XF:
         out.push_back(0x03); // OS:Unix
+
+        // 如果有文件名
+        if(flags & 0x08){
+            for(int i = 0;i<filename.size();++i){
+                out.push_back(static_cast<uint8_t>(filename[i]));
+            }
+            out.push_back(0x00);
+        }
 
         // Body
         DeflateCompressor compressor(config);
