@@ -45,6 +45,56 @@ namespace shed_zip{
         return huffman.get_buffer();
 
     }
+
+    uint32_t DeflateCompressor::estimate_store_size(){
+        // TODO:store 最大只能存65535 bytes
+        // Header ( 3 nits) + Padding(0-7bits) + LEN/NLEN(32bits) + Data(bytes * 8)
+        return 3+7+32+(uint32_t)literal_buffer.size()*8;
+    }
+
+    uint32_t DeflateCompressor::estimate_fixed_size(){
+        uint32_t bits = 3; // Header
+        // 遍历频率表计算
+        const auto& ll_freqs = freq_collector.get_lit_len_freqs();
+        const auto& d_freqs = freq_collector.get_dist_freqs();
+
+        // TODO 实现长度计算
+        return 0xFFFFFFFF;
+    }
+
+    uint32_t DeflateCompressor::estimate_dynamic_size(const HuffmanTree& l_tree,const HuffmanTree& d_tree){
+        uint32_t bits = 3; // header
+        // Header Size(HLIT,HDIST,HCLEN) + Code Length Tree + RLE Data
+        // 先估计为100bytes吧
+
+        const auto& ll_lens = l_tree.get_bit_lengths();
+        const auto& ll_freqs = freq_collector.get_lit_len_freqs();
+        for(int i=0; i<286; ++i) bits += ll_freqs[i] * ll_lens[i];
+        
+        const auto& d_lens = d_tree.get_bit_lengths();
+        const auto& d_freqs = freq_collector.get_dist_freqs();
+        for(int i=0; i<30; ++i) bits += d_freqs[i] * d_lens[i];
+
+        return bits + 800;// 先估计这么多吧
+    }
+
+    void DeflateCompressor::write_store_block(BitWriter& writer,bool is_final){
+        // BTYPE 00
+        uint32_t header = (is_final ? 1 : 0) | (0 << 1);
+        writer.write_bits(header, 3);
+        writer.flush_byte_align(); 
+
+         uint16_t len = (uint16_t)literal_buffer.size();
+        uint16_t nlen = ~len;
+
+        writer.write_bits(len, 16);
+        writer.write_bits(nlen, 16);
+
+        // 直接寫入字節
+        for(int i=0; i<literal_buffer.size(); ++i) {
+            writer.write_bits(literal_buffer[i], 8);
+        }
+    }
 }
 
 #include "deflate_compressor.tpp"
