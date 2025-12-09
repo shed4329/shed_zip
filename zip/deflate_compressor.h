@@ -21,7 +21,7 @@ namespace shed_zip{
             // Fixed Huffman 压缩,BTYPE = 01;
             void write_fixed_huffman(BitWriter& writer,bool is_final);
             // Dynamic Huffman 压缩，BTYPE = 10;
-            void write_dynamic_huffmna(BitWriter& writer,bool is_final);
+            void write_dynamic_block(BitWriter& writer,bool is_final);
 
             // 估计各种压缩方法的长度，用于确认
             uint32_t estimate_dynamic_size(const HuffmanTree& lit_tree,const HuffmanTree& dist_tree);

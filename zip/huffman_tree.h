@@ -37,7 +37,7 @@ namespace shed_zip{
     
     class HuffmanTree{
         public:
-            HuffmanTree();
+            HuffmanTree(){};
 
             void reset();
 
@@ -62,5 +62,7 @@ namespace shed_zip{
             void gen_codes(const shed_std::Vvector<uint32_t>& freqs,int max_symbol);
     };
 }
+
+#include "huffman_tree.tpp"
 
 #endif
