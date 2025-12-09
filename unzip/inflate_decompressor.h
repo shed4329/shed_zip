@@ -16,8 +16,6 @@ namespace shed_zip{
         private:
             DecompressStatus status;
 
-            // 处理 Block
-            bool process_block(BitReader& reader,shed_std::Vvector<uint8_t>& output);
 
             // 处理未压缩块（BYTPE 00）
             bool process_store_block(BitReader& reader,shed_std::Vvector<uint8_t>& output);
@@ -35,6 +33,7 @@ namespace shed_zip{
             static const int length_base[];
             static const int dist_extra_bits[];
             static const int dist_base[];
+            static const int cl_code_order[];
     };
 } // namesapce shed_zip
 
