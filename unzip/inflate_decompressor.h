@@ -24,6 +24,8 @@ namespace shed_zip{
 
             // 处理固定huffman编码(BTYPE 01)
             bool process_fixed_block(BitReader& reader,shed_std::Vvector<uint8_t>& output);
+            // 处理动态huffman编码(BYTPE 10)
+            bool process_dynamic_block(BitReader& reader, shed_std::Vvector<uint8_t>& output);
 
             // LZ77 复制逻辑
             void copy_match(shed_std::Vvector<uint8_t>& output, int length, int distance);
