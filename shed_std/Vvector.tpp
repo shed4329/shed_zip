@@ -1,3 +1,6 @@
+#ifndef VVECTOR_TPP
+#define VVECTOR_TPP
+
 #include "Vvector.h"
 
 template <typename E>
@@ -164,7 +167,11 @@ template <typename E>
 shed_std::Vvector<E>::Vvector() : _capacity(1024), _size(0), _array(1024) {}
 
 template <typename E>
-shed_std::Vvector<E>::Vvector(int size) : _capacity(_get_fitting_capacity(size)), _size(size), _array(_capacity) {}
+shed_std::Vvector<E>::Vvector(int size) : _capacity(_get_fitting_capacity(size)), _size(size), _array(_capacity) {
+    for(int i = 0;i<size;++i){
+        _array[i] = E();
+    }
+}
 
 template <typename E>
 shed_std::Vvector<E>::Vvector(const Vvector& other) : _size(other._size), _capacity(other._capacity), _array(other._array) {}
@@ -615,3 +622,5 @@ template <typename E>
 bool shed_std::Vvector<E>::_is_valid_range(int start, int end) const {
     return start >= 0 && end >= 0 && start <= _size && end <= _size && start < end;
 }
+
+#endif // VVECTOR_TPP

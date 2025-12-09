@@ -621,7 +621,7 @@ namespace shed_std {
         bool _is_valid_range(int start, int end) const;
     };
 
-#include "Vvector.cpp"
+#include "Vvector.tpp"
 }
 
 #endif // VVECTOR_H
