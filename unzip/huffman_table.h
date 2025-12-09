@@ -1,9 +1,14 @@
 #ifndef HUFFMAN_TABLE_H
 #define HUFFMAN_TABLE_H
 
-#include "zip_config.h"
+#include "../zip_config.h"
 #include "bit_reader.h"
 #include "huffman_decoder.h"
+
+// 申明HuffmanDecoder存在
+namespace shed_zip{
+    class HuffmanDecoder;
+}
 
 namespace shed_zip{
     class HuffmanTable{
@@ -27,5 +32,6 @@ namespace shed_zip{
         
     };
 } // namespace shed_zip
+#include "huffman_table.tpp"
 
 #endif

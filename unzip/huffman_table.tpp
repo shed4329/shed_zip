@@ -3,7 +3,6 @@
 
 #include "huffman_table.h"
 
-
 namespace shed_zip{
     // 每个符号的huffman码长数组  ->   查找的vvector
     // 符号0的码长3，符号1的码长5之类的

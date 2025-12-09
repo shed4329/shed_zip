@@ -3,7 +3,7 @@
 
 #include "../zip_config.h"
 #include "bit_reader.h"
-#include "huffman_table.h"
+
 
 namespace shed_zip{
     class HuffmanDecoder{

@@ -2,6 +2,7 @@
 #define HUFFMAN_DECODER_TPP
 
 #include "huffman_decoder.h"
+#include "huffman_table.h"
 
 namespace shed_zip{
     uint32_t HuffmanDecoder::reverse_bits(uint32_t val,int bits){
