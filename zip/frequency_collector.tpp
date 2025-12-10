@@ -4,7 +4,7 @@
 #include "frequency_collector.h"
 
 namespace shed_zip{
-    FrequencyCollector::FrequencyCollector():lit_len_freqs(),dist_freqs(){
+    FrequencyCollector::FrequencyCollector():lit_len_freqs(286),dist_freqs(30){
         lit_len_freqs.fill(0);
         dist_freqs.fill(0);
     }

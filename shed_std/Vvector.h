@@ -593,6 +593,13 @@ namespace shed_std {
          */
         Vvector subVec(int start_index, int end_index);
 
+        
+        /**
+         * 更改容器的size大小
+         * @param count 容器的新大小
+         */
+        void resize(int count);
+
     private:
         int _capacity;       // 容量（2的幂次）
         int _size = 0;       // 实际元素个数

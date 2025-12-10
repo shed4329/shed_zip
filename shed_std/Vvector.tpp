@@ -623,4 +623,33 @@ bool shed_std::Vvector<E>::_is_valid_range(int start, int end) const {
     return start >= 0 && end >= 0 && start <= _size && end <= _size && start < end;
 }
 
+template <typename E>
+void shed_std::Vvector<E>::resize(int count) {
+    // 1. 防御性检查：拦截负数
+    if (count < 0) {
+        throw shed_std::Eexception("Eexception: Vvector resize() get a negative!");
+    }
+
+    // 2. 缩小尺寸：析构多余元素（核心补充）
+    if (count < size()) {
+        // 仅析构 [count, size()) 区间的元素，释放对象资源
+        for (int i = count; i < size(); ++i) {
+            _array[i].~E();
+        }
+    }
+
+    // 3. 确保容量足够：扩容（时机调整到析构后，避免无效迁移）
+    reserve(count);
+
+    // 4. 扩大尺寸
+    if (count > size()) {
+        for (int i = size(); i < count; ++i) {
+            _array[i] = E();
+        }
+    }
+
+    // 5. 更新尺寸
+    _size = count;
+}
+
 #endif // VVECTOR_TPP

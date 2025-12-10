@@ -144,7 +144,7 @@ namespace shed_zip{
 
         // 5. 構建 Code Length Tree (CL Tree)
         // 統計 RLE 符號 (0-18) 的頻率
-        shed_std::Vvector<uint32_t> cl_freqs;
+        shed_std::Vvector<uint32_t> cl_freqs(19);
         cl_freqs.fill(0);
         for (int i=0; i<rle_syms.size(); ++i) cl_freqs[rle_syms[i]]++;
         

@@ -14,7 +14,9 @@ namespace shed_zip{
     void HuffmanTree::build_tree(const shed_std::Vvector<uint32_t>& frequencies, int max_bits){
         reset();
         int num_symbols = (int)frequencies.size();
+        bit_lengths.resize(num_symbols);
         bit_lengths.fill(0);
+        codes.resize(num_symbols);
         codes.fill(0);
 
         // 1.初始化,把所有存在的符号压入小根堆
