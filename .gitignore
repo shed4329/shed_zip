@@ -9,3 +9,5 @@
 *.svg
 *.jpg
 *.png
+# 忽略txt
+*.txt

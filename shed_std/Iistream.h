@@ -6,6 +6,17 @@
 namespace shed_std{
     class Iistream : public IiostreamBase{
         private:
+
+            inline bool is_blank_char(int character) {
+                // 覆盖所有标准空白字符：空格、水平制表、换行、回车、换页、垂直制表
+                return (character == ' '   || 
+                        character == '\t'  || 
+                        character == '\n'  || 
+                        character == '\r'  || 
+                        character == '\f'  || 
+                        character == '\v');
+            }
+
             inline char _to_lower(char character) {
                 if (character >= 'A' && character <= 'Z') {
                     return character + ('a' - 'A');  // 大写转小写
@@ -159,11 +170,11 @@ namespace shed_std{
                         _buf->setState(Iiostream_state::IO_EOF);
                         return *this;
                     }
-                }while( character==' '||character == '\t'||character == '\n');
+                }while(is_blank_char(character));
 
                 // 读取非空字符串
                 int i = 0;
-                while(character != ' ' && character !='\t' && character!='\n' && i<MAX_READING_LENGTH){
+                while(!is_blank_char(character) && i<MAX_READING_LENGTH){
                     str[i++] = (char)character;
                     character = _buf->stream_bump_char();
                 }
@@ -184,7 +195,7 @@ namespace shed_std{
                         _buf->setState(Iiostream_state::IO_EOF);
                         return *this;
                     }
-                }while( character==' '||character == '\t'||character == '\n');
+                }while(is_blank_char(character));
 
                 // 情况1:输入0或1
                 if(character == '0' || character == '1'){
@@ -233,7 +244,7 @@ namespace shed_std{
                         _buf->setState(Iiostream_state::IO_EOF);
                         return *this;
                     }
-                } while (character==' '||character == '\t'||character == '\n');
+                } while (is_blank_char(character));
 
                 // 处理正负号
                 if (character == '-') {

@@ -41,7 +41,9 @@ extern "C" BOOL __stdcall CloseHandle(HANDLE hObject);
 
 #else
     #define O_RDONLY        0                                               // 只读模式
-    extern "C" int open(const char* pathname, int flags);                   // 打开文件
+    typedef unsigned int mode_t;
+    extern "C" int open(const char* pathname,int flags, mode_t mode);   // mode用于创建文件时指定权限
+    extern "C" int write(int fd, const void* buf, unsigned int count);                 // 打开文件
     extern "C" int read(int fd,void* buf,unsigned int count);  // 读文件
     extern "C" int close(int fd);                                           // 关闭文件
 #endif
@@ -131,7 +133,7 @@ namespace shed_std{
                     }
                 #else
                     // Linux 调用open打开文件 
-                    _fd = ::open(filename,O_RDONLY);//指定为系统的namesapce
+                    _fd = ::open(filename,O_RDONLY,0);//指定为系统的namesapce
                     if(_fd == -1){
                         setState(Iiostream_state::IO_BAD);
                         return false;

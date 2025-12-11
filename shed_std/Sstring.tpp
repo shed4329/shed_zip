@@ -210,7 +210,6 @@ namespace shed_std{
     char& Sstring::back(){
         return at(_size-1);
     }
-
     const char& Sstring::back() const{
         return at(_size-1);
     }
@@ -641,6 +640,13 @@ namespace shed_std{
     inline Oostream& operator<<(Oostream& output_stream,const Sstring& str){
         output_stream << str.c_string();
         return output_stream;
+    }
+
+    inline Iistream& operator>>(Iistream& input_stream,Sstring& str){
+        char s[shed_std::Iistream::MAX_READING_LENGTH] = {0};
+        input_stream >> s;
+        str = Sstring(s);
+        return input_stream;
     }
     
 }

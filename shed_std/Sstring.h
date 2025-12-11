@@ -4,6 +4,7 @@
 #include "Eexception.h"
 #include "Vvector.h"
 #include "Oostream.h"
+#include "Iistream.h"
 
 namespace shed_std{
     constexpr int STRING_MAX_LENGTH = 65535;
@@ -579,6 +580,7 @@ namespace shed_std{
     
     // 支持使用输出流输出
     inline Oostream& operator<<(Oostream& output_stream,const Sstring& str);
+    inline Iistream& operator>>(Iistream& input_stream,Sstring& str);
 
 }
 
