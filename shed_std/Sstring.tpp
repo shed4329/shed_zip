@@ -68,11 +68,13 @@ namespace shed_std{
 
         // 检查是否超出最大长度限制
         if(new_capacity > STRING_MAX_LENGTH){
-            throw Eexception("Sstring:exceed max length!");
+            // 替换：容量超限 → EexceptionCapacityExceeded
+            throw EexceptionCapacityExceeded(new_capacity, STRING_MAX_LENGTH, "shed_std::Sstring::_expand");
         }
 
         if(new_capacity < 0){
-            throw Eexception("Sstring:Illegal length");
+            // 替换：无效参数 → EexceptionInvalidArgument
+            throw EexceptionInvalidArgument("new_capacity is negative", "shed_std::Sstring::_expand");
         }
 
         // 分配内存并拷贝数据
@@ -125,7 +127,8 @@ namespace shed_std{
 
     Sstring::Sstring(const char* str){
         if(str==nullptr){
-            throw Eexception("Sstring: could not construct from null pointer!");
+            // 替换：无效参数 → EexceptionInvalidArgument
+            throw EexceptionInvalidArgument("construct from null pointer", "shed_std::Sstring::Sstring(const char*)");
         }
         
         // 初始化
@@ -179,14 +182,14 @@ namespace shed_std{
 
     char& Sstring::at(int index){
         if(index<0||index >= _size){
-            throw Eexception("Sstring: Index out of range!");
+            throw EexceptionOutOfBoundary(index, _size, "shed_std::Sstring::at");
         }
         return _data[index];
     }
 
     const char& Sstring::at(int index) const{
         if(index<0||index >= _size){
-            throw Eexception("Sstring: Index out of range!");
+            throw EexceptionOutOfBoundary(index, _size, "shed_std::Sstring::at const");
         }
         return _data[index];
     }
@@ -200,16 +203,29 @@ namespace shed_std{
     }
 
     char& Sstring::front(){
+        // 补充：空容器检查 → EexceptionEmptyContainer
+        if (empty()) {
+            throw EexceptionEmptyContainer("access front on empty Sstring", "shed_std::Sstring::front");
+        }
         return at(0);
     }
 
     const char& Sstring::front() const{
+        // 补充：空容器检查 → EexceptionEmptyContainer
+        if (empty()) {
+            throw EexceptionEmptyContainer("access front on empty Sstring", "shed_std::Sstring::front const");
+        }
         return at(0);
     }
 
     char& Sstring::back(){
+        // 补充：空容器检查 → EexceptionEmptyContainer
+        if (empty()) {
+            throw EexceptionEmptyContainer("access back on empty Sstring", "shed_std::Sstring::back");
+        }
         return at(_size-1);
     }
+
     const char& Sstring::back() const{
         return at(_size-1);
     }
@@ -221,11 +237,12 @@ namespace shed_std{
     void Sstring::insert(int index,char c){
          // 检查插入位置合法性（pos可等于size()，表示插入到末尾）
         if (index < 0 || index > _size) {
-            throw Eexception("Sstring insert: invalid position");
+            throw EexceptionOutOfBoundary(index, _size, "shed_std::Sstring::insert(int, char)");
         }
         // 检查是否超出最大长度
         if (_size + 1 > STRING_MAX_LENGTH) {
-            throw Eexception("Sstring insert: exceed max length");
+            // 替换：容量超限 → EexceptionCapacityExceeded
+            throw EexceptionCapacityExceeded(_size + 1, STRING_MAX_LENGTH, "shed_std::Sstring::insert(int, char)");
         }
 
         // 容量不足时扩容
@@ -247,12 +264,13 @@ namespace shed_std{
     void Sstring::insert(int index,const Sstring& str){
          // 检查插入位置合法性（pos可等于size()，表示插入到末尾）
         if (index < 0 || index > _size) {
-            throw Eexception("Sstring insert: invalid position");
+            throw EexceptionOutOfBoundary(index, _size, "shed_std::Sstring::insert(int, const Sstring&)");
         }
         int len = str._size;
         // 检查是否超出最大长度
         if(_size + len > STRING_MAX_LENGTH){
-            throw Eexception("Sstring insert: exceed max length");
+            // 替换：容量超限 → EexceptionCapacityExceeded
+            throw EexceptionCapacityExceeded(_size + len, STRING_MAX_LENGTH, "shed_std::Sstring::insert(int, const Sstring&)");
         }
         // 分配空间
         if(_size+len>_capacity){
@@ -269,10 +287,11 @@ namespace shed_std{
         _data[_size] = '\0';
     }
 
+    // 修正拼写：erease → erase（保持兼容，仅注释提醒）
     void Sstring::erease(int index){
         // 检查插入位置合法性（pos可等于size()，表示插入到末尾）
         if (index < 0 || index >= _size) {
-            throw Eexception("Sstring erease: invalid position");
+            throw EexceptionOutOfBoundary(index, _size, "shed_std::Sstring::erease");
         }
         // 将后面的数据拷贝到前面来,不用管终止符
         for(int i = index;i<_size - 1;i++){
@@ -285,16 +304,16 @@ namespace shed_std{
     void Sstring::replace(int index,char c){
         // 检查插入位置合法性（pos可等于size()，表示插入到末尾）
         if (index < 0 || index >= _size) {
-            throw Eexception("Sstring replace: invalid position");
+            throw EexceptionOutOfBoundary(index, _size, "shed_std::Sstring::replace(int, char)");
         }
         _data[index] = c;
     }
 
     void Sstring::replace(int index,const Sstring& other){
          if (index < 0 || index >= _size) {
-            throw Eexception("Sstring replace: invalid position");
+            throw EexceptionOutOfBoundary(index, _size, "shed_std::Sstring::replace(int, const Sstring&)");
         }
-        if(other._size == 0) erease(index); // 等价于杀出
+        if(other._size == 0) erease(index); // 等价于删除
         else if(other._size == 1) replace(index,other.front());
         else{
             // 有点长的情况
@@ -304,7 +323,8 @@ namespace shed_std{
             int new_size = _size - 1 + len;
             // 检查是否超出最大长度限制
             if (new_size > STRING_MAX_LENGTH) {
-                throw Eexception("Sstring replace: exceed max length"); // 修正提示文案
+                // 替换：容量超限 → EexceptionCapacityExceeded
+                throw EexceptionCapacityExceeded(new_size, STRING_MAX_LENGTH, "shed_std::Sstring::replace(int, const Sstring&)");
             }
 
             // 5. 容量不足则扩容（目标容量为new_size）
@@ -334,7 +354,8 @@ namespace shed_std{
     Sstring& Sstring::operator+=(const Sstring& other){
         int new_size = _size + other._size;
         if(new_size > STRING_MAX_LENGTH){
-            throw Eexception("Sstring: concat exceed max length!");
+            // 替换：容量超限 → EexceptionCapacityExceeded
+            throw EexceptionCapacityExceeded(new_size, STRING_MAX_LENGTH, "shed_std::Sstring::operator+=(const Sstring&)");
         }
 
         // 容量不够的时候填充
@@ -350,7 +371,8 @@ namespace shed_std{
 
     Sstring& Sstring::operator+=(const char* str){
         if (str == nullptr) {
-            throw Eexception("Sstring: concat with null pointer");
+            // 替换：无效参数 → EexceptionInvalidArgument
+            throw EexceptionInvalidArgument("concat with null pointer", "shed_std::Sstring::operator+=(const char*)");
         }
         Sstring temp(str);
         *this += temp;
@@ -359,7 +381,8 @@ namespace shed_std{
 
     void Sstring::push_back(char c){
         if(_size+1>STRING_MAX_LENGTH){
-            throw Eexception("Sstring: push_back exceed max length");
+            // 替换：容量超限 → EexceptionCapacityExceeded
+            throw EexceptionCapacityExceeded(_size + 1, STRING_MAX_LENGTH, "shed_std::Sstring::push_back");
         }
 
         // 容量足够
@@ -378,11 +401,13 @@ namespace shed_std{
 
     void Sstring::resize(int new_size,char fill_char){
         if(new_size <0){
-            throw Eexception("Sstring: resize with negative size");
+            // 替换：无效参数 → EexceptionInvalidArgument
+            throw EexceptionInvalidArgument("resize with negative size", "shed_std::Sstring::resize");
         }
 
         if(new_size > STRING_MAX_LENGTH){
-            throw Eexception("Sstring: resize exceed max length");
+            // 替换：容量超限 → EexceptionCapacityExceeded
+            throw EexceptionCapacityExceeded(new_size, STRING_MAX_LENGTH, "shed_std::Sstring::resize");
         }
 
         if(new_size > _size){
@@ -552,7 +577,7 @@ namespace shed_std{
 
     Sstring Sstring::substr(int start,int end) const{
         if(start<0||end>=_size||end<start){
-            throw Eexception("Illegal index");
+            throw EexceptionOutOfBoundary(start, end, "shed_std::Sstring::substr");
         }
 
         // 1.计算子串长度
@@ -578,16 +603,16 @@ namespace shed_std{
     int Sstring::copy(char* dest, int count, int pos) const {
         // 1. 边界和空指针检查
         if (dest == nullptr) {
-            // 目标缓冲区为空，无法复制
-            throw Eexception("Sstring copy: Destination buffer is null.");
+            // 替换：无效参数 → EexceptionInvalidArgument
+            throw EexceptionInvalidArgument("destination buffer is null", "shed_std::Sstring::copy");
         }
         if (pos < 0 || pos > _size) {
             // 起始位置必须在 [0, _size] 范围内 (pos == _size 表示复制长度为 0)
-            throw Eexception("Sstring copy: Illegal starting position.");
+            throw EexceptionOutOfBoundary(pos, _size, "shed_std::Sstring::copy");
         }
         if (count < 0) {
-            // 复制长度不能为负
-            throw Eexception("Sstring copy: Copy count cannot be negative.");
+            // 替换：无效参数 → EexceptionInvalidArgument
+            throw EexceptionInvalidArgument("copy count is negative", "shed_std::Sstring::copy");
         }
 
         // 2.需要复制的字符

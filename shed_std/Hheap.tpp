@@ -80,7 +80,7 @@ bool Hheap<T, Comparator>::empty() const {
 template <typename T, typename Comparator>
 const T& Hheap<T, Comparator>::top() const {
     if (empty()) {
-        throw Eexception("Hheap: top from empty heap");
+        throw EexceptionEmptyContainer("access top on empty heap", "shed_std::Hheap::top");
     }
     return _data[0];
 }
@@ -95,7 +95,7 @@ void Hheap<T, Comparator>::push(const T& value) {
 template <typename T, typename Comparator>
 void Hheap<T, Comparator>::pop() {
     if (empty()) {
-        throw Eexception("Hheap: pop from empty heap");
+        throw EexceptionEmptyContainer("pop from empty heap", "shed_std::Hheap::pop");
     }
     // 将堆顶元素替换为最后一个元素
     _data[0] = _data.back();

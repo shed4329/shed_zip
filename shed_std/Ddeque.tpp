@@ -111,7 +111,7 @@ void Ddeque<T>::shrink_to_fit() {
 template <typename T>
 T& Ddeque<T>::at(int index) {
     if (index < 0 || index >= size()) {
-        throw Eexception("Eexception: Ddque Index out of range!");
+        throw EexceptionOutOfBoundary(index, size(), "shed_std::Ddeque::at");
     }
     return _data.at(index + _index_front);
 }
@@ -119,7 +119,7 @@ T& Ddeque<T>::at(int index) {
 template <typename T>
 const T& Ddeque<T>::at(int index) const {
     if (index < 0 || index >= size()) {
-        throw Eexception("Eexception: Ddque Index out of range!");
+        throw EexceptionOutOfBoundary(index, size(), "shed_std::Ddeque::at const");
     }
     return _data.at(index + _index_front);
 }
@@ -137,7 +137,7 @@ const T& Ddeque<T>::operator[](int index) const {
 template <typename T>
 T& Ddeque<T>::front() {
     if (empty()) {
-        throw Eexception("Eexception: empty Ddeque doesn't have front");
+        throw EexceptionEmptyContainer("access front on empty Ddeque", "shed_std::Ddeque::front");
     }
     return at(0);
 }
@@ -145,7 +145,7 @@ T& Ddeque<T>::front() {
 template <typename T>
 const T& Ddeque<T>::front() const {
     if (empty()) {
-        throw Eexception("Eexception: empty Ddeque doesn't have front");
+        throw EexceptionEmptyContainer("access front on empty Ddeque", "shed_std::Ddeque::front const");
     }
     return at(0);
 }
@@ -153,7 +153,7 @@ const T& Ddeque<T>::front() const {
 template <typename T>
 T& Ddeque<T>::back() {
     if (empty()) {
-        throw Eexception("Eexception: empty Ddeque doesn't have back");
+        throw EexceptionEmptyContainer("access back on empty Ddeque", "shed_std::Ddeque::back");
     }
     return _data.at(_index_end - 1);
 }
@@ -161,7 +161,7 @@ T& Ddeque<T>::back() {
 template <typename T>
 const T& Ddeque<T>::back() const {
     if (empty()) {
-        throw Eexception("Eexception: empty Ddeque doesn't have back");
+        throw EexceptionEmptyContainer("access back on empty Ddeque", "shed_std::Ddeque::back const");
     }
     return _data.at(_index_end - 1);
 }
@@ -180,7 +180,7 @@ void Ddeque<T>::clear() {
 template <typename T>
 void Ddeque<T>::insert(int index, T& value) {
     if (index < 0 || index > size()) {
-        throw Eexception("Eexception: Ddque Index out of range!");
+        throw EexceptionOutOfBoundary(index, size(), "shed_std::Ddeque::insert");
     }
     int data_index = _index_front + index;
     _data.insert(data_index, value);
@@ -190,7 +190,7 @@ void Ddeque<T>::insert(int index, T& value) {
 template <typename T>
 void Ddeque<T>::erase(int index) {
     if (index < 0 || index >= size()) {
-        throw Eexception("Eexception: Ddque Index out of range!");
+        throw EexceptionOutOfBoundary(index, size(), "shed_std::Ddeque::erase");
     }
     int data_index = _index_front + index;
     _data.erase(data_index);
@@ -209,7 +209,7 @@ void Ddeque<T>::pop_back() {
         _data.erase(_index_end - 1);
         _index_end--;
     } else {
-        throw Eexception("Eexception: empty Ddeque could not pop back!");
+        throw EexceptionEmptyContainer("pop_back on empty Ddeque", "shed_std::Ddeque::pop_back");
     }
 }
 
@@ -225,7 +225,7 @@ void Ddeque<T>::pop_front() {
     if (!empty()) {
         _index_front++;
     } else {
-        throw Eexception("Eexception: empty Ddeque could not pop front!");
+        throw EexceptionEmptyContainer("pop_front on empty Ddeque", "shed_std::Ddeque::pop_front");
     }
 }
 
@@ -234,7 +234,7 @@ void Ddeque<T>::swap(int index1, int index2) {
     if (index1 >= 0 && index1 < size() && index2 >= 0 && index2 < size() && index1 != index2) {
         _data.swap(index1 + _index_front, index2 + _index_front);
     } else {
-        throw Eexception("Eexception: Ddque swap index out of range!");
+        throw EexceptionOutOfBoundary(index1, size(), "shed_std::Ddeque::swap");
     }
 }
 
@@ -435,7 +435,7 @@ void Ddeque<T>::reverse() {
 template <typename T>
 Ddeque<T> Ddeque<T>::subDeque(int start_index, int end_index) {
     if (start_index < 0 || end_index > size() || start_index >= end_index) {
-        throw Eexception("Exception: Invalid Interval (subVec)");
+        throw EexceptionOutOfBoundary(start_index, end_index, "shed_std::Ddeque::subDeque");
     }
     int data_start = _index_front + start_index;
     int data_end = _index_front + end_index;

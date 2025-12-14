@@ -75,7 +75,8 @@ namespace shed_std{
     template<typename E>
     Aarray<E>::Aarray(int N):basic_array<E>(N){
         if(N<0){
-            throw Eexception("Exception: Illegal Size for the size of Aarray could not be less than 0!");
+            // 非法长度 → 无效参数异常
+            throw EexceptionInvalidArgument("Aarray size cannot be negative", "shed_std::Aarray::Aarray(int)");
         }
     }
 
@@ -125,7 +126,8 @@ namespace shed_std{
     template<typename E>
     E& Aarray<E>::at(int index){
         if(index<0||index>=this->_length){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(index, this->_length, "shed_std::Aarray::at");
         }
         return this->_array[index];
     }
@@ -133,7 +135,8 @@ namespace shed_std{
     template<typename E>
     const E& Aarray<E>::at(int index) const{
         if(index<0||index>=this->_length){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(index, this->_length, "shed_std::Aarray::at const");
         }
         return this->_array[index];
     }
@@ -141,7 +144,8 @@ namespace shed_std{
     template<typename E>
     E& Aarray<E>::front(){
         if(this->empty()){
-            throw Eexception("Exception: Null Pointer Reference for the Aarray's size is 0!");
+            // 空数组访问front → 空容器异常
+            throw EexceptionEmptyContainer("access front on empty Aarray", "shed_std::Aarray::front");
         }
         return this->_array[0];
     }
@@ -149,7 +153,8 @@ namespace shed_std{
     template<typename E>
     const E& Aarray<E>::front() const{
         if(this->empty()){
-            throw Eexception("Exception: Null Pointer Reference for the Aarray's size is 0!");
+            // 空数组访问front → 空容器异常
+            throw EexceptionEmptyContainer("access front on empty Aarray", "shed_std::Aarray::front const");
         }
         return this->_array[0];
     }
@@ -157,7 +162,8 @@ namespace shed_std{
     template<typename E>
     E& Aarray<E>::back(){
         if(this->empty()){
-            throw Eexception("Exception: Null Pointer Reference for the Aarray's size is 0!");
+            // 空数组访问back → 空容器异常
+            throw EexceptionEmptyContainer("access back on empty Aarray", "shed_std::Aarray::back");
         }
         return this->_array[this->_length - 1];
     }
@@ -165,7 +171,8 @@ namespace shed_std{
     template<typename E>
     const E& Aarray<E>::back() const{
         if(this->empty()){
-            throw Eexception("Exception: Null Pointer Reference for the Aarray's size is 0!");
+            // 空数组访问back → 空容器异常
+            throw EexceptionEmptyContainer("access back on empty Aarray", "shed_std::Aarray::back const");
         }
         return this->_array[this->_length - 1];
     }
@@ -174,7 +181,8 @@ namespace shed_std{
     template<typename E>
     Aarray<E>::Aarray_iterator::Aarray_iterator(int index,Aarray* array):_index(index),_array(array){
         if(_index < 0 ||_index > _array->_length){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(index, _array->_length, "shed_std::Aarray_iterator::Aarray_iterator");
         }
     }
 
@@ -191,7 +199,8 @@ namespace shed_std{
     template<typename E>
     typename Aarray<E>::Aarray_iterator& Aarray<E>::Aarray_iterator::operator++(){
         if(_index+1 > _array->_length){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(_index+1, _array->_length, "shed_std::Aarray_iterator::operator++");
         }
         _index++;
         return *this;
@@ -207,7 +216,8 @@ namespace shed_std{
     template<typename E>
     typename Aarray<E>::Aarray_iterator& Aarray<E>::Aarray_iterator::operator--(){
         if(_index-1 <0){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(_index-1, _array->_length, "shed_std::Aarray_iterator::operator--");
         }
         _index--;
         return *this;
@@ -224,7 +234,8 @@ namespace shed_std{
     typename Aarray<E>::Aarray_iterator Aarray<E>::Aarray_iterator::operator+(int n) const{
         int new_index = _index + n;
         if(new_index <0 || new_index > _array->_length){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(new_index, _array->_length, "shed_std::Aarray_iterator::operator+");
         }
         return Aarray_iterator(new_index,_array);
     }
@@ -237,7 +248,8 @@ namespace shed_std{
     template<typename E>
     int Aarray<E>::Aarray_iterator::operator-(const Aarray_iterator& other) const{
         if(_array != other._array){
-            throw Eexception("Exception: substract operator cannot be carried on different Aarray");
+            // 不同数组相减 → 无效参数异常
+            throw EexceptionInvalidArgument("subtract iterators of different Aarray", "shed_std::Aarray_iterator::operator-");
         }
         return _index - other._index;
     }
@@ -256,7 +268,8 @@ namespace shed_std{
     template<typename E>
     Aarray<E>::Aarray_const_iterator::Aarray_const_iterator(int index,const Aarray* array):_index(index),_array(array){
         if(_index < 0 ||_index > _array->_length){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(index, _array->_length, "shed_std::Aarray_const_iterator::Aarray_const_iterator");
         }
     }
 
@@ -273,7 +286,8 @@ namespace shed_std{
     template<typename E>
     typename Aarray<E>::Aarray_const_iterator& Aarray<E>::Aarray_const_iterator::operator++(){
         if(_index+1 > _array->_length){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(_index+1, _array->_length, "shed_std::Aarray_const_iterator::operator++");
         }
         _index++;
         return *this;
@@ -289,7 +303,8 @@ namespace shed_std{
     template<typename E>
     typename Aarray<E>::Aarray_const_iterator& Aarray<E>::Aarray_const_iterator::operator--(){
         if(_index-1 <0){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(_index-1, _array->_length, "shed_std::Aarray_const_iterator::operator--");
         }
         _index--;
         return *this;
@@ -306,7 +321,8 @@ namespace shed_std{
     typename Aarray<E>::Aarray_const_iterator Aarray<E>::Aarray_const_iterator::operator+(int n) const{
         int new_index = _index + n;
         if(new_index <0 || new_index > _array->_length){
-            throw Eexception("Exception: Index of out Aarray's range!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(new_index, _array->_length, "shed_std::Aarray_const_iterator::operator+");
         }
         return Aarray_const_iterator(new_index,_array);
     }
@@ -319,7 +335,8 @@ namespace shed_std{
     template<typename E>
     int Aarray<E>::Aarray_const_iterator::operator-(const Aarray_const_iterator& other) const{
         if(_array != other._array){
-            throw Eexception("Exception: substract operator cannot be carried on different Aarray");
+            // 不同数组相减 → 无效参数异常
+            throw EexceptionInvalidArgument("subtract iterators of different Aarray", "shed_std::Aarray_const_iterator::operator-");
         }
         return _index - other._index;
     }
@@ -337,7 +354,8 @@ namespace shed_std{
     template<typename E>
     typename Aarray<E>::Aarray_iterator Aarray<E>::begin() {
         if (this->empty()) {
-            throw Eexception("Exception: Aarray is empty, cannot get begin()!");
+            // 空数组获取begin → 空容器异常
+            throw EexceptionEmptyContainer("get begin() on empty Aarray", "shed_std::Aarray::begin");
         }
         return Aarray_iterator(0,this);
     }
@@ -350,7 +368,8 @@ namespace shed_std{
     template<typename E>
     typename Aarray<E>::Aarray_const_iterator Aarray<E>::begin() const{
         if(this->empty()){
-            throw Eexception("Exception: Aarray is empty, cannot get begin()!");
+            // 空数组获取begin → 空容器异常
+            throw EexceptionEmptyContainer("get begin() on empty Aarray", "shed_std::Aarray::begin const");
         }
         return Aarray_const_iterator(0,this);
     }
@@ -436,7 +455,8 @@ namespace shed_std{
             }
             return;
         }
-        throw Eexception("Exception: Index out of range or the indexs are the same");
+        // 越界异常 → 统一位置格式
+        throw EexceptionOutOfBoundary(index1, this->_length, "shed_std::Aarray::swap");
     }
 
     template<typename E>
@@ -449,7 +469,8 @@ namespace shed_std{
     template<typename E>
     Aarray<E> Aarray<E>::subArr(int start_index,int end_index){
         if (start_index < 0 || end_index > this->_length || start_index >= end_index) {
-            throw Eexception("Exception: Invalid subarray range (out of bounds or start >= end)!");
+            // 越界异常 → 统一位置格式
+            throw EexceptionOutOfBoundary(start_index, end_index, "shed_std::Aarray::subArr");
         }
     
         Aarray ans(end_index - start_index);  
